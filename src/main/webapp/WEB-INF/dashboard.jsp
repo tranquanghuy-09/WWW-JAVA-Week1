@@ -6,9 +6,13 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
 <%@ page import="vn.edu.iuh.fit.entities.Account" %>
 <%@ page import="java.util.List" %>
 <% String activeMenu1 = (String) session.getAttribute("activeMenu1"); %>
+<% Account accountLogin = (Account) session.getAttribute("accountLogin");%>
+<% String roleName = (String) session.getAttribute("roleName"); %>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -46,15 +50,17 @@
             <a class="nav-link" data-toggle="tab" href="#menu2">Quản lý Log</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#menu2">Đăng xuất</a>
+            <form action="ControlServlet?action=logout" method="post">
+                <button type="submit" class="nav-link">Đăng xuất</button>
+            </form>
         </li>
     </ul>
 
     <!-- Tab panes -->
     <div class="tab-content">
         <div id="home" class="container tab-pane active"><br>
-            <h3>Xin chào</h3>
-            <p>${account}</p>
+            <h3>Xin chào ${sessionScope.roleName} <%= accountLogin.getFullName() %></h3>
+            <p>${accountLogin}</p>
         </div>
         <div id="menu1" class="container tab-pane fade"><br>
             <div class="">
@@ -160,6 +166,10 @@
         </div>
     </div>
 </div>
+<script>
+    var temp = '<%= accountLogin %>';
+    console.log(temp);
+</script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Kích hoạt tab "Quản lý Account" ngay khi trang được tải

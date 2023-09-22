@@ -33,6 +33,38 @@ public class GrantAccess implements Serializable {
         this.note = note;
     }
 
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public boolean isGrant() {
+        return isGrant;
+    }
+
+    public void setGrant(boolean grant) {
+        isGrant = grant;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
     @Override
     public String toString() {
         return "GrantAccess{" +

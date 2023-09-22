@@ -14,14 +14,15 @@ public class GrantAccessResponsitory {
         em = DBConnection.getInstance().getEntityManager();
     }
 
-    public Optional<GrantAccess> findGrantAccess(String id){
+    public Optional<GrantAccess> findGrantAccessByAccountId(String accountId) {
         EntityTransaction tr = em.getTransaction();
         tr.begin();
-        try{
-            GrantAccess grantAccess = em.find(GrantAccess.class, id);
+        try {
+            String sql = "SELECT * FROM grant_access WHERE account_id = ? ";
+            GrantAccess grantAccess = (GrantAccess) em.createNativeQuery(sql, GrantAccess.class).setParameter(1, accountId).getSingleResult();
             tr.commit();
             return Optional.of(grantAccess);
-        }catch(Exception e){
+        } catch (Exception e) {
             tr.rollback();
             e.printStackTrace();
         }

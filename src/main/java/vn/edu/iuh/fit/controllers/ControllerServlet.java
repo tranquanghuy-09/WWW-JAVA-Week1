@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.jetbrains.annotations.NotNull;
 import vn.edu.iuh.fit.entities.Account;
+import vn.edu.iuh.fit.entities.GrantAccess;
 import vn.edu.iuh.fit.services.AccountService;
 import vn.edu.iuh.fit.services.GrantAccessService;
 
@@ -29,16 +30,26 @@ public class ControllerServlet extends HttpServlet {
         switch (action) {
             case "dashboard":
                 HttpSession httpSession = request.getSession(true);
-                httpSession.invalidate();
-                httpSession = request.getSession(true);
+//                httpSession.invalidate();
+//                httpSession = request.getSession(true);
 
                 List<Account> accountList = accountService.getAll();
                 System.out.println(accountList);
                 httpSession.setAttribute("accountList",accountList);
                 httpSession.setAttribute("activeHome","active");
                 httpSession.setAttribute("activeMenu1","");
+                httpSession.setAttribute("accountLogin", httpSession.getAttribute("accountLogin"));
+                httpSession.setAttribute("roleName", httpSession.getAttribute("roleName"));
                 RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/dashboard.jsp");
                 requestDispatcher.forward(request,response);
+
+                break;
+            case "dashboard_user":
+                HttpSession httpSession11 = request.getSession(true);
+                httpSession11.setAttribute("accountLogin", httpSession11.getAttribute("accountLogin"));
+                httpSession11.setAttribute("roleName", httpSession11.getAttribute("roleName"));
+                RequestDispatcher requestDispatcher11 = request.getRequestDispatcher("/WEB-INF/dashboard_user.jsp");
+                requestDispatcher11.forward(request,response);
 
                 break;
             case "managerAccount":
@@ -75,35 +86,23 @@ public class ControllerServlet extends HttpServlet {
                 break;
         }
     }
-
+    private void logoutAccount(@NotNull HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        HttpSession session = request.getSession(true);
+        session.invalidate();
+        response.sendRedirect("index.jsp");
+    }
 
 
     protected void doPost(@NotNull HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+            throws IOException, ServletException {
         String action = request.getParameter("action");
         switch (action) {
             case "login":
-                String userName = request.getParameter("username");
-                String password = request.getParameter("password");
-                Optional<Account> account = accountService.checkLogin(userName, password);
-                System.out.println(account);
-                if (account.isEmpty()) {
-                    HttpSession session = request.getSession(true);
-                    session.setAttribute("errorLogin", "Wrong username or password");
-                    session.setAttribute("username", "");
-                    session.setAttribute("password", "");
-                    response.sendRedirect("index.jsp");
-
-                }else{
-                    HttpSession httpSession = request.getSession(true);
-                    httpSession.invalidate();
-
-                    httpSession = request.getSession(true);
-                    httpSession.setAttribute("account", account.toString());
-                    response.sendRedirect("ControlServlet?action=dashboard");
-
-                }
+                loginAccount(request, response);
             break;
+            case "logout":
+                logoutAccount(request, response);
+                break;
             case "addAccount":
                 String accountId = request.getParameter("accountId");
                 String fullName = request.getParameter("fullName");
@@ -152,6 +151,9 @@ public class ControllerServlet extends HttpServlet {
                 System.out.println("run");
                 deleteAccount(request,response);
                 break;
+            case "updateAccount_User":
+                updateAccountUser(request,response);
+                break;
         }
     }
 
@@ -162,6 +164,60 @@ public class ControllerServlet extends HttpServlet {
         if(b.isPresent()){
             response.sendRedirect("ControlServlet?action=managerAccount");
         }
+    }
+
+    private void loginAccount(@NotNull HttpServletRequest request, HttpServletResponse response) throws IOException{
+        String userName = request.getParameter("username");
+        String password = request.getParameter("password");
+        Optional<Account> optionalAccount = accountService.checkLogin(userName, password);
+        if (optionalAccount.isEmpty()) {
+            HttpSession session = request.getSession(true);
+            session.setAttribute("errorLogin", "Wrong username or password");
+            session.setAttribute("username", "");
+            session.setAttribute("password", "");
+            response.sendRedirect("index.jsp");
+
+        }else{
+            Account account = optionalAccount.get();
+            Optional<GrantAccess> opGrantAccess = grantAccessService.findGrantAccessByAccountId(account.getId());
+            GrantAccess grantAccess = opGrantAccess.get();
+            String roleName = grantAccess.getRole().getName();
+            if(roleName.compareToIgnoreCase("administrator") == 0){
+                HttpSession httpSession = request.getSession(true);
+                httpSession.invalidate();
+
+                httpSession = request.getSession(true);
+                httpSession.setAttribute("accountLogin", account);
+                httpSession.setAttribute("roleName", roleName);
+
+                response.sendRedirect("ControlServlet?action=dashboard");
+            }else{
+                HttpSession httpSession = request.getSession(true);
+                httpSession.invalidate();
+
+                httpSession = request.getSession(true);
+                httpSession.setAttribute("accountLogin", account);
+                httpSession.setAttribute("roleName", roleName);
+
+                response.sendRedirect("ControlServlet?action=dashboard_user");
+            }
+
+
+        }
+    }
+
+    private void updateAccountUser(@NotNull HttpServletRequest request, HttpServletResponse response) throws IOException{
+        String accountId = request.getParameter("accountId");
+        String fullName = request.getParameter("fullName");
+        String email = request.getParameter("email");
+        String pass = request.getParameter("pwd");
+        String phone = request.getParameter("phone");
+        byte status= 1;
+
+        Account account = new Account(accountId, fullName, pass, email, phone, status);
+        System.out.println(account);
+        accountService.updateAccount(account);
+        response.sendRedirect("ControlServlet?action=dashboard_user");
     }
 
 }
