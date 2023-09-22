@@ -55,7 +55,7 @@ public class ControllerServlet extends HttpServlet {
             case "managerAccount":
                 List<Account> accountList2 = accountService.getAll();
                 HttpSession httpSession2 = request.getSession(true);
-                httpSession2.invalidate();
+
 
                 httpSession2 = request.getSession(true);
                 httpSession2.setAttribute("accountList",accountList2);
@@ -121,9 +121,6 @@ public class ControllerServlet extends HttpServlet {
                 System.out.println(account1);
                 boolean b = accountService.addAccount(account1);
                 HttpSession httpSession3 = request.getSession(true);
-                httpSession3.invalidate();
-
-                httpSession3 = request.getSession(true);
                 httpSession3.setAttribute("resultAdd", b);
                 response.sendRedirect("ControlServlet?action=managerAccount");
                 break;
