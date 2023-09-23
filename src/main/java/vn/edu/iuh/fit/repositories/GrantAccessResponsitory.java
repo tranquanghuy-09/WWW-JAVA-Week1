@@ -28,4 +28,17 @@ public class GrantAccessResponsitory {
         }
         return Optional.empty();
     }
+//    public Optional<GrantAccess> findGrantAccessByAccountId(String accountId){
+//        EntityTransaction tr = em.getTransaction();
+//        tr.begin();
+//        try{
+//            GrantAccess grantAccess = em.find(GrantAccess.class, accountId);
+//            tr.commit();
+//            return Optional.of(grantAccess);
+//        }catch(Exception e){
+//            tr.rollback();
+//            e.printStackTrace();
+//        }
+//        return Optional.empty();
+//    }
 }

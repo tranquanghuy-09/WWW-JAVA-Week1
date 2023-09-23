@@ -9,7 +9,10 @@
 
 <%@ page import="vn.edu.iuh.fit.entities.Account" %>
 <%@ page import="java.util.List" %>
+<%@ page import="vn.edu.iuh.fit.entities.Role" %>
+<%@ page import="vn.edu.iuh.fit.entities.Log" %>
 <% String activeMenu1 = (String) session.getAttribute("activeMenu1"); %>
+<% String activeMenu2 = (String) session.getAttribute("activeMenu2"); %>
 <% Account accountLogin = (Account) session.getAttribute("accountLogin");%>
 <% String roleName = (String) session.getAttribute("roleName"); %>
 
@@ -44,14 +47,14 @@
             <a class="nav-link ${activeMenu1}" data-toggle="tab" href="#menu1" id="menu1Tab">Quản lý Account</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#menu2">Quản lý Role</a>
+            <a class="nav-link ${activeMenu2}" data-toggle="tab" href="#menu2" id="menu2Tab">Quản lý Role</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#menu2">Quản lý Log</a>
+            <a class="nav-link" data-toggle="tab" href="#menu3">Quản lý Log</a>
         </li>
         <li class="nav-item">
             <form action="ControlServlet?action=logout" method="post">
-                <button type="submit" class="nav-link">Đăng xuất</button>
+                <button type="submit" class="nav-link">Đăng Xuất</button>
             </form>
         </li>
     </ul>
@@ -60,7 +63,7 @@
     <div class="tab-content">
         <div id="home" class="container tab-pane active"><br>
             <h3>Xin chào ${sessionScope.roleName} <%= accountLogin.getFullName() %></h3>
-            <p>${accountLogin}</p>
+<%--            <p>${accountLogin}</p>--%>
         </div>
         <div id="menu1" class="container tab-pane fade"><br>
             <div class="">
@@ -72,7 +75,7 @@
             <table class="table table-bordered">
                 <thead>
                 <tr>
-                    <th>AccountID</th>
+                    <th>Account ID</th>
                     <th>FullName</th>
                     <th>Email</th>
                     <th >Password</th>
@@ -106,70 +109,78 @@
                 </tbody>
             </table>
         </div>
+
         <div id="menu2" class="container tab-pane fade"><br>
-            <h3>Menu 2</h3>
-            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium,
-                totam rem aperiam.</p>
+            <div class="">
+                <a href="ControlServlet?action=addRole">
+                    <button id="creatRole" class="btn btn-primary mb-3" type="">Create Role</button>
+                </a>
+
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>Role ID</th>
+                    <th>Role Name</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Function</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <% for (Role role : (List<Role>) session.getAttribute("roleList")) { %>
+                <tr>
+                    <td contenteditable="true"><%= role.getId()%></td>
+                    <td contenteditable="true"><%= role.getName() %></td>
+                    <td contenteditable="true"><%= role.getDescription()%></td>
+                    <td contenteditable="true"><%= role.getStatus() %></td>
+                    <td class="text-center d-flex align-items-center">
+                        <a href="ControlServlet?action=updateRole&id=<%= role.getId()%>">
+                            <button class="btn btn-info">Update</button>
+                        </a>
+                        <form action="ControlServlet?action=deleteRole&id=<%= role.getId() %>" method="post">
+                            <button type="submit" class="btn btn-danger ml-2">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                <% } %>
+
+
+                </tbody>
+            </table>
+        </div>
+
+        <div id="menu3" class="container tab-pane fade"><br>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Account ID</th>
+                    <th>Login Time</th>
+                    <th>Logout Time</th>
+                    <th>Notes</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <% for (Log log : (List<Log>) session.getAttribute("logList")) { %>
+                <tr>
+                    <td contenteditable="true"><%= log.getId()%></td>
+                    <td contenteditable="true"><%= log.getAccountId()%></td>
+                    <td contenteditable="true"><%= log.getLoginTime()%></td>
+                    <td contenteditable="true"><%= log.getLogoutTime()%></td>
+                    <td contenteditable="true"><%= log.getNotes()%></td>
+                </tr>
+                <% } %>
+
+
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
-<!-- The Modal -->
-<div class="modal" id="myModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <h4 class="modal-title">Create Account</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-
-            <!-- Modal body -->
-            <div class="modal-body">
-                <form action="/action_page.php">
-                    <div class="form-group">
-                        <label for="accountId">Account Id:</label>
-                        <input type="text" class="form-control" id="accountId" placeholder="" name="accountId">
-                    </div>
-                    <div class="form-group">
-                        <label for="fullName">Full name:</label>
-                        <input type="text" class="form-control" id="fullName" placeholder="" name="fullName">
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email:</label>
-                        <input type="email" class="form-control" id="email" placeholder="" name="email">
-                    </div>
-                    <div class="form-group">
-                        <label for="pwd">Password:</label>
-                        <input type="password" class="form-control" id="pwd" placeholder="" name="pswd">
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">Phone:</label>
-                        <input type="text" class="form-control" id="phone" placeholder="" name="phone">
-                    </div>
-                    <div class="form-group form-check">
-                        <label class="form-check-label">
-                            <input class="form-check-input" type="checkbox" name="status" required> Status.
-                        </label>
-                    </div>
-
-                </form>
-            </div>
-
-            <!-- Modal footer -->
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">Submit</button>
-                <!-- <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button> -->
-            </div>
-
-        </div>
-    </div>
-</div>
-<script>
-    var temp = '<%= accountLogin %>';
-    console.log(temp);
-</script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Kích hoạt tab "Quản lý Account" ngay khi trang được tải
@@ -188,9 +199,23 @@
                 }
             });
         }else
-        console.log("Ko chayj if");
-
-
+            console.log("Ko chayj if");
+        var activeMenu2Value = '<%= activeMenu2 %>';
+        if(activeMenu2Value == "active"){
+            var menu2Tab = document.getElementById('menu2Tab');
+            menu2Tab.click();
+            console.log(activeMenu2Value);
+            // Hiển thị nội dung của tab "Quản lý Account" và ẩn các tab khác
+            var tabContent = document.querySelectorAll('.tab-pane');
+            tabContent.forEach(function(tab) {
+                if (tab.id === 'menu2') {
+                    tab.classList.add('show', 'active');
+                } else {
+                    tab.classList.remove('show', 'active');
+                }
+            });
+        }else
+            console.log("Ko chay if");
     });
 </script>
 <script>
@@ -207,8 +232,6 @@
         alert(${resultAdd});
     }
 </script>
-
-
 
 </body>
 

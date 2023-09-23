@@ -33,6 +33,13 @@ public class Log {
         this.notes = notes;
     }
 
+    public Log(String accountId, LocalDateTime loginTime, LocalDateTime logoutTime, String notes) {
+        this.accountId = accountId;
+        this.loginTime = loginTime;
+        this.logoutTime = logoutTime;
+        this.notes = notes;
+    }
+
     public int getId() {
         return id;
     }

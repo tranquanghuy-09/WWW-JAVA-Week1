@@ -16,9 +16,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%@ page import="vn.edu.iuh.fit.entities.Account" %>
+<%@ page import="vn.edu.iuh.fit.entities.Role" %>
 <%@ page import="java.util.List" %>
 <% String activeMenu1 = (String) session.getAttribute("activeMenu1"); %>
 <% Account accountLogin = (Account) session.getAttribute("accountLogin");%>
+<% Role role = (Role) session.getAttribute("role");%>
 <% String roleName = (String) session.getAttribute("roleName"); %>
 
 <!DOCTYPE html>
@@ -65,7 +67,7 @@
     <div class="tab-content">
         <div id="home" class="container tab-pane active"><br>
             <h3>Xin chào ${sessionScope.roleName} <%= accountLogin.getFullName() %></h3>
-            <p>${accountLogin}</p>
+<%--            <p>${accountLogin}</p>--%>
         </div>
         <div id="menu1" class="container tab-pane fade"><br>
             <div class="container">
@@ -99,8 +101,33 @@
             </div>
         </div>
         <div id="menu2" class="container tab-pane fade"><br>
-            <h3>Menu 2</h3>
-            <p>Role</p>
+            <div class="">
+                <a href="ControlServlet?action=addRole">
+                    <button id="creatRole" class="btn btn-primary mb-3" type="">Create Role</button>
+                </a>
+
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>Role ID</th>
+                    <th>Role Name</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr>
+                    <td contenteditable="true"><%= role.getId()%></td>
+                    <td contenteditable="true"><%= role.getName() %></td>
+                    <td contenteditable="true"><%= role.getDescription()%></td>
+                    <td contenteditable="true"><%= role.getStatus() %></td>
+                </tr>
+
+
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

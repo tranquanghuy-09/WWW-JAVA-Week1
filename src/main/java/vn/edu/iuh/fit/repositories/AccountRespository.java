@@ -40,13 +40,13 @@ public class AccountRespository {
         return Optional.empty();
     }
 
-    public Optional<Account> updateAccount(Account updatedAccount){
+    public Optional<Account> updateAccount(Account accountUpdate){
         EntityTransaction tr = em.getTransaction();
         tr.begin();
         try {
-            Account account = em.find(Account.class, updatedAccount.getId());
+            Account account = em.find(Account.class, accountUpdate.getId());
             if (account != null) {
-                em.merge(updatedAccount);
+                em.merge(accountUpdate);
 
                 tr.commit();
                 return Optional.of(account);
